@@ -8,7 +8,7 @@ import { OrderFormPage } from './OrderFormPage'
 import { OrdersPage } from './OrdersPage'
 
 const products: Product[] = [
-  { id: 'p1', name: 'Wireless Mouse', sku: 'SKU-001', price: 25.99, stock: 120, status: 'active' },
+  { id: 'p1', name: 'Wireless Mouse', sku: 'SKU-001', price: 25.99, stock: 120, status: 'active', categoryId: 'cat1' },
 ]
 
 const customers: Customer[] = [
