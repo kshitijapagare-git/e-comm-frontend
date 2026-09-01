@@ -11,11 +11,21 @@ export interface Product {
 
 export type ProductInput = Omit<Product, 'id'>
 
+export interface Customer {
+  id: string
+  name: string
+  email: string
+  phone: string
+  address: string
+}
+
+export type CustomerInput = Omit<Customer, 'id'>
+
 export type OrderStatus = 'pending' | 'paid' | 'shipped' | 'cancelled'
 
 export interface Order {
   id: string
-  customerName: string
+  customerId: string
   productId: string
   quantity: number
   unitPrice: number

@@ -1,11 +1,11 @@
 import { useEffect, useState } from 'react'
 import type { FormEvent } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
-import { createOrder, getOrder, getProducts, updateOrder } from '../api/client'
-import type { OrderInput, OrderStatus, Product } from '../types'
+import { createOrder, getCustomers, getOrder, getProducts, updateOrder } from '../api/client'
+import type { Customer, OrderInput, OrderStatus, Product } from '../types'
 
 const emptyOrder: OrderInput = {
-  customerName: '',
+  customerId: '',
   productId: '',
   quantity: 1,
   unitPrice: 0,
@@ -18,10 +18,15 @@ export function OrderFormPage() {
   const navigate = useNavigate()
   const [form, setForm] = useState<OrderInput>(emptyOrder)
   const [products, setProducts] = useState<Product[]>([])
+  const [customers, setCustomers] = useState<Customer[]>([])
   const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
     getProducts().then(setProducts)
+  }, [])
+
+  useEffect(() => {
+    getCustomers().then(setCustomers)
   }, [])
 
   useEffect(() => {
@@ -49,12 +54,21 @@ export function OrderFormPage() {
       {error && <p role="alert">{error}</p>}
       <form onSubmit={handleSubmit}>
         <label>
-          Customer name
-          <input
+          Customer
+          <select
             required
-            value={form.customerName}
-            onChange={(e) => setForm({ ...form, customerName: e.target.value })}
-          />
+            value={form.customerId}
+            onChange={(e) => setForm({ ...form, customerId: e.target.value })}
+          >
+            <option value="" disabled>
+              Select a customer
+            </option>
+            {customers.map((customer) => (
+              <option key={customer.id} value={customer.id}>
+                {customer.name}
+              </option>
+            ))}
+          </select>
         </label>
         <label>
           Product
