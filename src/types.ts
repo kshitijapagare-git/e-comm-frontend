@@ -7,6 +7,7 @@ export interface Product {
   price: number
   stock: number
   status: ProductStatus
+  categoryId: string
 }
 
 export type ProductInput = Omit<Product, 'id'>
@@ -33,3 +34,11 @@ export interface Order {
 }
 
 export type OrderInput = Omit<Order, 'id'>
+
+export interface Category {
+  id: string
+  name: string
+  description?: string
+}
+
+export type CategoryInput = Omit<Category, 'id'>

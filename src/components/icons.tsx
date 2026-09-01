@@ -77,3 +77,11 @@ export function ChevronRightIcon(props: SVGProps<SVGSVGElement>) {
     </Icon>
   )
 }
+
+export function FolderIcon(props: SVGProps<SVGSVGElement>) {
+  return (
+    <Icon {...props}>
+      <path d="M4 4a1 1 0 0 0-1 1v14a1 1 0 0 0 1 1h16a1 1 0 0 0 1-1V8a1 1 0 0 0-1-1h-8l-2-3H4Z" />
+    </Icon>
+  )
+}
