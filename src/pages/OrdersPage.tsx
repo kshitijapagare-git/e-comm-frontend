@@ -1,6 +1,10 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { deleteOrder, getCustomers, getOrders, getProducts } from '../api/client'
+import { Pagination } from '../components/Pagination'
+import { StatusBadge } from '../components/StatusBadge'
+import { Toolbar } from '../components/Toolbar'
+import { usePagination } from '../hooks/usePagination'
 import type { Customer, Order, Product } from '../types'
 
 export function OrdersPage() {
@@ -8,6 +12,7 @@ export function OrdersPage() {
   const [products, setProducts] = useState<Product[]>([])
   const [customers, setCustomers] = useState<Customer[]>([])
   const [error, setError] = useState<string | null>(null)
+  const [search, setSearch] = useState('')
 
   function load() {
     Promise.all([getOrders(), getProducts(), getCustomers()])
@@ -34,12 +39,24 @@ export function OrdersPage() {
     return customers.find((c) => c.id === customerId)?.name ?? customerId
   }
 
+  const filtered = useMemo(() => {
+    const query = search.trim().toLowerCase()
+    if (!query) return orders
+    return orders.filter(
+      (order) =>
+        customerName(order.customerId).toLowerCase().includes(query) ||
+        productName(order.productId).toLowerCase().includes(query),
+    )
+  }, [orders, products, customers, search])
+
+  const { page, setPage, totalPages, pageItems } = usePagination(filtered)
+
   return (
     <div>
-      <div className="page-header">
-        <h1>Orders</h1>
+      <h1>Orders</h1>
+      <Toolbar searchValue={search} onSearchChange={setSearch} searchPlaceholder="Search orders…">
         <Link to="/orders/new">New order</Link>
-      </div>
+      </Toolbar>
       {error && <p role="alert">{error}</p>}
       <table>
         <thead>
@@ -53,13 +70,15 @@ export function OrdersPage() {
           </tr>
         </thead>
         <tbody>
-          {orders.map((order) => (
+          {pageItems.map((order) => (
             <tr key={order.id}>
               <td>{customerName(order.customerId)}</td>
               <td>{productName(order.productId)}</td>
               <td>{order.quantity}</td>
               <td>{order.unitPrice}</td>
-              <td>{order.status}</td>
+              <td>
+                <StatusBadge status={order.status} />
+              </td>
               <td>
                 <Link to={`/orders/${order.id}/edit`}>Edit</Link>{' '}
                 <button type="button" onClick={() => handleDelete(order.id)}>
@@ -70,6 +89,7 @@ export function OrdersPage() {
           ))}
         </tbody>
       </table>
+      <Pagination page={page} totalPages={totalPages} onPageChange={setPage} />
     </div>
   )
 }
