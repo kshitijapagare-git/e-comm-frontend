@@ -1,7 +1,12 @@
-import type { Category, CategoryInput, Customer, CustomerInput, Order, OrderInput, Product, ProductInput } from '../types'
+import type { Category, CategoryInput, Customer, CustomerInput, Order, OrderInput, Product, ProductInput, Supplier } from '../types'
 
 let categories: Category[] = [
   { id: 'cat1', name: 'Accessories', description: 'Computer accessories' },
+]
+
+let suppliers: Supplier[] = [
+  { id: 'sup1', name: 'Acme Supplies' },
+  { id: 'sup2', name: 'Global Parts Co.' },
 ]
 
 let products: Product[] = [
@@ -106,6 +111,22 @@ export async function updateOrder(id: string, input: OrderInput): Promise<Order>
 export async function deleteOrder(id: string): Promise<void> {
   orders = orders.filter((o) => o.id !== id)
   return delay(undefined)
+}
+
+export async function getSuppliers(): Promise<Supplier[]> {
+  return delay(suppliers)
+}
+
+export async function getSupplier(id: string): Promise<Supplier> {
+  const supplier = suppliers.find((s) => s.id === id)
+  if (!supplier) throw new Error(`Supplier ${id} not found`)
+  return delay(supplier)
+}
+
+export async function uploadProductImage(id: string, file: File): Promise<{ imageUrl: string }> {
+  void id
+  const imageUrl = URL.createObjectURL(file)
+  return delay({ imageUrl })
 }
 
 export async function getCategories(): Promise<Category[]> {
