@@ -1,10 +1,11 @@
 import type { ReactNode } from 'react'
 import { NavLink } from 'react-router-dom'
 import { AvatarTile } from './AvatarTile'
-import { BellIcon, CartIcon, TagIcon, UsersIcon } from './icons'
+import { BellIcon, CartIcon, FolderIcon, TagIcon, UsersIcon } from './icons'
 
 const NAV_ITEMS = [
   { to: '/products', label: 'Products', Icon: TagIcon },
+  { to: '/categories', label: 'Categories', Icon: FolderIcon },
   { to: '/orders', label: 'Orders', Icon: CartIcon },
   { to: '/customers', label: 'Customers', Icon: UsersIcon },
 ]

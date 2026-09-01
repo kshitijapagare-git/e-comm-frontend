@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react'
 import type { FormEvent } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
-import { createProduct, getProduct, updateProduct } from '../api/client'
-import type { ProductInput, ProductStatus } from '../types'
+import { createProduct, getCategories, getProduct, updateProduct } from '../api/client'
+import type { Category, ProductInput, ProductStatus } from '../types'
 
 const emptyProduct: ProductInput = {
   name: '',
@@ -10,6 +10,7 @@ const emptyProduct: ProductInput = {
   price: 0,
   stock: 0,
   status: 'active',
+  categoryId: '',
 }
 
 export function ProductFormPage() {
@@ -17,7 +18,12 @@ export function ProductFormPage() {
   const isEdit = Boolean(id)
   const navigate = useNavigate()
   const [form, setForm] = useState<ProductInput>(emptyProduct)
+  const [categories, setCategories] = useState<Category[]>([])
   const [error, setError] = useState<string | null>(null)
+
+  useEffect(() => {
+    getCategories().then(setCategories)
+  }, [])
 
   useEffect(() => {
     if (!id) return
@@ -79,6 +85,23 @@ export function ProductFormPage() {
             value={form.stock}
             onChange={(e) => setForm({ ...form, stock: Number(e.target.value) })}
           />
+        </label>
+        <label>
+          Category
+          <select
+            required
+            value={form.categoryId}
+            onChange={(e) => setForm({ ...form, categoryId: e.target.value })}
+          >
+            <option value="" disabled>
+              Select a category
+            </option>
+            {categories.map((category) => (
+              <option key={category.id} value={category.id}>
+                {category.name}
+              </option>
+            ))}
+          </select>
         </label>
         <label>
           Status

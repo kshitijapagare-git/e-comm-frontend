@@ -1,21 +1,25 @@
 import { useEffect, useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { deleteProduct, getProducts } from '../api/client'
+import { deleteProduct, getCategories, getProducts } from '../api/client'
 import { AvatarTile } from '../components/AvatarTile'
 import { Pagination } from '../components/Pagination'
 import { StatusBadge } from '../components/StatusBadge'
 import { Toolbar } from '../components/Toolbar'
 import { usePagination } from '../hooks/usePagination'
-import type { Product } from '../types'
+import type { Category, Product } from '../types'
 
 export function ProductsPage() {
   const [products, setProducts] = useState<Product[]>([])
+  const [categories, setCategories] = useState<Category[]>([])
   const [error, setError] = useState<string | null>(null)
   const [search, setSearch] = useState('')
 
   function load() {
-    getProducts()
-      .then(setProducts)
+    Promise.all([getProducts(), getCategories()])
+      .then(([products, categories]) => {
+        setProducts(products)
+        setCategories(categories)
+      })
       .catch(() => setError('Failed to load products'))
   }
 
@@ -24,6 +28,10 @@ export function ProductsPage() {
   async function handleDelete(id: string) {
     await deleteProduct(id)
     load()
+  }
+
+  function categoryName(categoryId: string) {
+    return categories.find((c) => c.id === categoryId)?.name ?? categoryId
   }
 
   const filtered = useMemo(() => {
@@ -51,6 +59,7 @@ export function ProductsPage() {
             <th>SKU</th>
             <th>Price</th>
             <th>Stock</th>
+            <th>Category</th>
             <th>Status</th>
             <th></th>
           </tr>
@@ -65,6 +74,7 @@ export function ProductsPage() {
               <td>{product.sku}</td>
               <td>{product.price}</td>
               <td>{product.stock}</td>
+              <td>{categoryName(product.categoryId)}</td>
               <td>
                 <StatusBadge status={product.status} />
               </td>

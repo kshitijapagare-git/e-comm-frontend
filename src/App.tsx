@@ -1,5 +1,7 @@
 import { Navigate, Route, Routes } from 'react-router-dom'
 import { AppLayout } from './components/AppLayout'
+import { CategoriesPage } from './pages/CategoriesPage'
+import { CategoryFormPage } from './pages/CategoryFormPage'
 import { CustomerFormPage } from './pages/CustomerFormPage'
 import { CustomersPage } from './pages/CustomersPage'
 import { OrderFormPage } from './pages/OrderFormPage'
@@ -21,6 +23,9 @@ function App() {
         <Route path="/customers" element={<CustomersPage />} />
         <Route path="/customers/new" element={<CustomerFormPage />} />
         <Route path="/customers/:id/edit" element={<CustomerFormPage />} />
+        <Route path="/categories" element={<CategoriesPage />} />
+        <Route path="/categories/new" element={<CategoryFormPage />} />
+        <Route path="/categories/:id/edit" element={<CategoryFormPage />} />
       </Routes>
     </AppLayout>
   )
