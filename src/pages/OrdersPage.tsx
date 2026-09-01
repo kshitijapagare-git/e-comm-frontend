@@ -1,18 +1,20 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { deleteOrder, getOrders, getProducts } from '../api/client'
-import type { Order, Product } from '../types'
+import { deleteOrder, getCustomers, getOrders, getProducts } from '../api/client'
+import type { Customer, Order, Product } from '../types'
 
 export function OrdersPage() {
   const [orders, setOrders] = useState<Order[]>([])
   const [products, setProducts] = useState<Product[]>([])
+  const [customers, setCustomers] = useState<Customer[]>([])
   const [error, setError] = useState<string | null>(null)
 
   function load() {
-    Promise.all([getOrders(), getProducts()])
-      .then(([orders, products]) => {
+    Promise.all([getOrders(), getProducts(), getCustomers()])
+      .then(([orders, products, customers]) => {
         setOrders(orders)
         setProducts(products)
+        setCustomers(customers)
       })
       .catch(() => setError('Failed to load orders'))
   }
@@ -26,6 +28,10 @@ export function OrdersPage() {
 
   function productName(productId: string) {
     return products.find((p) => p.id === productId)?.name ?? productId
+  }
+
+  function customerName(customerId: string) {
+    return customers.find((c) => c.id === customerId)?.name ?? customerId
   }
 
   return (
@@ -49,7 +55,7 @@ export function OrdersPage() {
         <tbody>
           {orders.map((order) => (
             <tr key={order.id}>
-              <td>{order.customerName}</td>
+              <td>{customerName(order.customerId)}</td>
               <td>{productName(order.productId)}</td>
               <td>{order.quantity}</td>
               <td>{order.unitPrice}</td>

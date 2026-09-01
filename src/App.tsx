@@ -1,4 +1,6 @@
 import { Navigate, NavLink, Route, Routes } from 'react-router-dom'
+import { CustomerFormPage } from './pages/CustomerFormPage'
+import { CustomersPage } from './pages/CustomersPage'
 import { OrderFormPage } from './pages/OrderFormPage'
 import { OrdersPage } from './pages/OrdersPage'
 import { ProductFormPage } from './pages/ProductFormPage'
@@ -10,6 +12,7 @@ function App() {
       <nav>
         <NavLink to="/products">Products</NavLink>
         <NavLink to="/orders">Orders</NavLink>
+        <NavLink to="/customers">Customers</NavLink>
       </nav>
       <main>
         <Routes>
@@ -20,6 +23,9 @@ function App() {
           <Route path="/orders" element={<OrdersPage />} />
           <Route path="/orders/new" element={<OrderFormPage />} />
           <Route path="/orders/:id/edit" element={<OrderFormPage />} />
+          <Route path="/customers" element={<CustomersPage />} />
+          <Route path="/customers/new" element={<CustomerFormPage />} />
+          <Route path="/customers/:id/edit" element={<CustomerFormPage />} />
         </Routes>
       </main>
     </div>
