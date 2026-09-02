@@ -10,7 +10,7 @@ import { PageHeader } from '../components/PageHeader'
 import { StatusBadge } from '../components/StatusBadge'
 import { TagInput } from '../components/TagInput'
 import { useCategories } from '../hooks/useCategories'
-import type { Supplier } from '../types'
+import type { ProductInput, Supplier } from '../types'
 
 const UNIT_OPTIONS = ['pcs', 'kg', 'g', 'l', 'ml', 'box', 'pack', 'pair']
 
@@ -90,7 +90,7 @@ export function ProductFormPage() {
     reset,
     watch,
     formState: { errors, isValid, isSubmitting },
-  } = useForm<ProductFormValues>({
+  } = useForm({
     resolver: zodResolver(productSchema),
     mode: 'onChange',
     defaultValues: emptyProduct,
@@ -110,11 +110,15 @@ export function ProductFormPage() {
 
   async function onSubmit(data: ProductFormValues) {
     setSubmitError(null)
+    // zod's required/optional inference needs strictNullChecks, which this
+    // project's tsconfig doesn't enable, so z.infer widens every field to
+    // optional here even though the resolver has already validated them.
+    const payload = data as ProductInput
     try {
       if (isEdit && id) {
-        await updateProduct(id, data)
+        await updateProduct(id, payload)
       } else {
-        await createProduct(data)
+        await createProduct(payload)
       }
       navigate('/products')
     } catch (err) {

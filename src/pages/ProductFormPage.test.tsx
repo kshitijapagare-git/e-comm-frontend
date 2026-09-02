@@ -27,7 +27,7 @@ async function fillRequiredFields(user: ReturnType<typeof userEvent.setup>) {
   await user.type(screen.getByLabelText(/^Product Name/i), 'Keyboard')
   await user.type(screen.getByLabelText(/^SKU/i), 'SKU-003')
 
-  const categoryInput = screen.getByRole('combobox')
+  const categoryInput = screen.getByLabelText(/^Category/i)
   await user.click(categoryInput)
   const option = await screen.findByRole('option', { name: 'Accessories' })
   await user.click(option)
@@ -81,7 +81,7 @@ describe('ProductFormPage', () => {
 
     renderPage()
 
-    await screen.findByRole('combobox')
+    await screen.findByLabelText(/^Category/i)
 
     expect(screen.getByRole('button', { name: /save product/i })).toBeDisabled()
     expect(createProduct).not.toHaveBeenCalled()
