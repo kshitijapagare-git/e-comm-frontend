@@ -1,25 +1,23 @@
 import { useEffect, useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { deleteProduct, getCategories, getProducts } from '../api/client'
+import { deleteProduct, getProducts } from '../api/client'
 import { AvatarTile } from '../components/AvatarTile'
 import { Pagination } from '../components/Pagination'
 import { StatusBadge } from '../components/StatusBadge'
 import { Toolbar } from '../components/Toolbar'
+import { useCategories } from '../hooks/useCategories'
 import { usePagination } from '../hooks/usePagination'
-import type { Category, Product } from '../types'
+import type { Product } from '../types'
 
 export function ProductsPage() {
   const [products, setProducts] = useState<Product[]>([])
-  const [categories, setCategories] = useState<Category[]>([])
+  const { categories } = useCategories()
   const [error, setError] = useState<string | null>(null)
   const [search, setSearch] = useState('')
 
   function load() {
-    Promise.all([getProducts(), getCategories()])
-      .then(([products, categories]) => {
-        setProducts(products)
-        setCategories(categories)
-      })
+    getProducts()
+      .then(setProducts)
       .catch(() => setError('Failed to load products'))
   }
 
