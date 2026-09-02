@@ -8,9 +8,29 @@ export interface Product {
   stock: number
   status: ProductStatus
   categoryId: string
+  barcode?: string
+  brand?: string
+  supplierId?: string
+  costPrice?: number
+  taxRate?: number
+  lowStockThreshold?: number
+  unit?: string
+  featured?: boolean
+  trackInventory?: boolean
+  imageUrl?: string
+  shortDescription?: string
+  description?: string
+  tags?: string[]
+  metaTitle?: string
+  metaDescription?: string
 }
 
 export type ProductInput = Omit<Product, 'id'>
+
+export interface Supplier {
+  id: string
+  name: string
+}
 
 export interface Customer {
   id: string
