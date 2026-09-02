@@ -1,12 +1,63 @@
-import type { Category, CategoryInput, Customer, CustomerInput, Order, OrderInput, Product, ProductInput } from '../types'
+import type { Category, CategoryInput, Customer, CustomerInput, Order, OrderInput, Product, ProductInput, Supplier } from '../types'
 
 let categories: Category[] = [
   { id: 'cat1', name: 'Accessories', description: 'Computer accessories' },
 ]
 
+let suppliers: Supplier[] = [
+  { id: 'sup1', name: 'Acme Supplies', email: 'sales@acmesupplies.example', phone: '555-0200' },
+  { id: 'sup2', name: 'Global Parts Co.', email: 'contact@globalparts.example', phone: '555-0201' },
+]
+
 let products: Product[] = [
-  { id: 'p1', name: 'Wireless Mouse', sku: 'SKU-001', price: 25.99, stock: 120, status: 'active', categoryId: 'cat1' },
-  { id: 'p2', name: 'Mechanical Keyboard', sku: 'SKU-002', price: 79.5, stock: 45, status: 'active', categoryId: 'cat1' },
+  {
+    id: 'p1',
+    name: 'Wireless Mouse',
+    sku: 'SKU-001',
+    barcode: '012345678901',
+    price: 25.99,
+    costPrice: 12.5,
+    taxRatePercent: 5,
+    stock: 120,
+    lowStockThreshold: 20,
+    unit: 'piece',
+    status: 'active',
+    categoryId: 'cat1',
+    brand: 'Acme',
+    supplierId: 'sup1',
+    featured: false,
+    trackInventory: true,
+    imageUrl: undefined,
+    shortDescription: 'Ergonomic wireless mouse',
+    description: 'A comfortable wireless mouse with long battery life.',
+    tags: ['electronics', 'accessories'],
+    metaTitle: undefined,
+    metaDescription: undefined,
+  },
+  {
+    id: 'p2',
+    name: 'Mechanical Keyboard',
+    sku: 'SKU-002',
+    barcode: '012345678902',
+    price: 79.5,
+    costPrice: 40,
+    taxRatePercent: 5,
+    stock: 45,
+    lowStockThreshold: 10,
+    unit: 'piece',
+    status: 'active',
+    categoryId: 'cat1',
+    brand: 'Acme',
+    supplierId: 'sup2',
+    featured: true,
+    trackInventory: true,
+    imageUrl: undefined,
+    shortDescription: 'Tactile mechanical keyboard',
+    description: 'A durable mechanical keyboard with tactile switches.',
+    tags: ['electronics', 'accessories'],
+    metaTitle: undefined,
+    metaDescription: undefined,
+  },
 ]
 
 let customers: Customer[] = [
@@ -48,6 +99,10 @@ export async function updateProduct(id: string, input: ProductInput): Promise<Pr
 export async function deleteProduct(id: string): Promise<void> {
   products = products.filter((p) => p.id !== id)
   return delay(undefined)
+}
+
+export async function getSuppliers(): Promise<Supplier[]> {
+  return delay(suppliers)
 }
 
 export async function getCustomers(): Promise<Customer[]> {
