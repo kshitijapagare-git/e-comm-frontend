@@ -1,10 +1,9 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { deleteProduct, getProducts } from '../api/client'
 import { AvatarTile } from '../components/AvatarTile'
 import { Pagination } from '../components/Pagination'
 import { StatusBadge } from '../components/StatusBadge'
-import { Toolbar } from '../components/Toolbar'
 import { useCategories } from '../hooks/useCategories'
 import { usePagination } from '../hooks/usePagination'
 import type { Product } from '../types'
@@ -13,7 +12,6 @@ export function ProductsPage() {
   const [products, setProducts] = useState<Product[]>([])
   const { categories } = useCategories()
   const [error, setError] = useState<string | null>(null)
-  const [search, setSearch] = useState('')
 
   function load() {
     getProducts()
@@ -32,22 +30,16 @@ export function ProductsPage() {
     return categories.find((c) => c.id === categoryId)?.name ?? categoryId
   }
 
-  const filtered = useMemo(() => {
-    const query = search.trim().toLowerCase()
-    if (!query) return products
-    return products.filter(
-      (product) => product.name.toLowerCase().includes(query) || product.sku.toLowerCase().includes(query),
-    )
-  }, [products, search])
-
-  const { page, setPage, totalPages, pageItems } = usePagination(filtered)
+  const { page, setPage, totalPages, pageItems } = usePagination(products)
 
   return (
     <div>
-      <h1>Products</h1>
-      <Toolbar searchValue={search} onSearchChange={setSearch} searchPlaceholder="Search products…">
-        <Link to="/products/new">New product</Link>
-      </Toolbar>
+      <div className="page-header">
+        <h1>Products</h1>
+        <div className="toolbar-actions">
+          <Link to="/products/new">New product</Link>
+        </div>
+      </div>
       {error && <p role="alert">{error}</p>}
       <table>
         <thead>
