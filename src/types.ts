@@ -1,5 +1,7 @@
 export type ProductStatus = 'active' | 'inactive'
 
+export type ProductUnit = 'unit' | 'kg' | 'g' | 'l' | 'ml' | 'box' | 'pack'
+
 export interface Product {
   id: string
   name: string
@@ -8,6 +10,21 @@ export interface Product {
   stock: number
   status: ProductStatus
   categoryId: string
+  barcode?: string
+  brand?: string
+  supplierId?: string
+  costPrice?: number
+  taxRate?: number
+  lowStockThreshold?: number
+  unit?: ProductUnit
+  featured?: boolean
+  trackInventory?: boolean
+  imageUrl?: string
+  shortDescription?: string
+  description?: string
+  tags?: string[]
+  metaTitle?: string
+  metaDescription?: string
 }
 
 export type ProductInput = Omit<Product, 'id'>
@@ -42,3 +59,10 @@ export interface Category {
 }
 
 export type CategoryInput = Omit<Category, 'id'>
+
+export interface Supplier {
+  id: string
+  name: string
+}
+
+export type SupplierInput = Omit<Supplier, 'id'>

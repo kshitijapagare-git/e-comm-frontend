@@ -3,12 +3,16 @@ import userEvent from '@testing-library/user-event'
 import { MemoryRouter, Route, Routes } from 'react-router-dom'
 import { describe, expect, it, vi } from 'vitest'
 import * as api from '../api/client'
-import type { Category, Product } from '../types'
+import type { Category, Product, Supplier } from '../types'
 import { ProductFormPage } from './ProductFormPage'
 import { ProductsPage } from './ProductsPage'
 
 const categories: Category[] = [
   { id: 'cat1', name: 'Accessories', description: 'Computer accessories' },
+]
+
+const suppliers: Supplier[] = [
+  { id: 'sup1', name: 'Acme Supplies' },
 ]
 
 const products: Product[] = [
@@ -33,9 +37,23 @@ describe('ProductsPage', () => {
 })
 
 describe('ProductFormPage', () => {
-  it('submits a new product', async () => {
+  async function fillRequiredFields(user: ReturnType<typeof userEvent.setup>) {
+    await screen.findByText('Accessories')
+
+    await user.type(screen.getByLabelText(/Product Name/i), 'Keyboard')
+    await user.type(screen.getByLabelText(/^SKU/i), 'SKU-003')
+    await user.type(screen.getByLabelText(/^Price/i), '10')
+    await user.type(screen.getByLabelText(/Stock Quantity/i), '5')
+
+    const categoryField = screen.getByLabelText(/Category/i)
+    await user.type(categoryField, 'Access')
+    await user.click(await screen.findByRole('option', { name: 'Accessories' }))
+  }
+
+  it('submits a new product with the extended field set', async () => {
     const user = userEvent.setup()
     vi.spyOn(api, 'getCategories').mockResolvedValue(categories)
+    vi.spyOn(api, 'getSuppliers').mockResolvedValue(suppliers)
     const createProduct = vi.spyOn(api, 'createProduct').mockResolvedValue({
       id: 'p2',
       name: 'Keyboard',
@@ -55,24 +73,48 @@ describe('ProductFormPage', () => {
       </MemoryRouter>,
     )
 
-    await screen.findByText('Accessories')
-    await user.type(screen.getByLabelText('Name'), 'Keyboard')
-    await user.type(screen.getByLabelText('SKU'), 'SKU-003')
-    await user.clear(screen.getByLabelText('Price'))
-    await user.type(screen.getByLabelText('Price'), '10')
-    await user.clear(screen.getByLabelText('Stock'))
-    await user.type(screen.getByLabelText('Stock'), '5')
-    await user.selectOptions(screen.getByLabelText('Category'), 'cat1')
-    await user.click(screen.getByRole('button', { name: 'Save' }))
+    await fillRequiredFields(user)
 
-    expect(createProduct).toHaveBeenCalledWith({
-      name: 'Keyboard',
-      sku: 'SKU-003',
-      price: 10,
-      stock: 5,
-      status: 'active',
-      categoryId: 'cat1',
-    })
+    await user.click(screen.getByRole('button', { name: /Save product/i }))
+
+    expect(createProduct).toHaveBeenCalledWith(
+      expect.objectContaining({
+        name: 'Keyboard',
+        sku: 'SKU-003',
+        price: 10,
+        stock: 5,
+        status: 'active',
+        categoryId: 'cat1',
+        featured: false,
+        trackInventory: true,
+      }),
+    )
     expect(await screen.findByText('Products list')).toBeInTheDocument()
+  })
+
+  it('shows the API error message verbatim when saving fails', async () => {
+    const user = userEvent.setup()
+    vi.spyOn(api, 'getCategories').mockResolvedValue(categories)
+    vi.spyOn(api, 'getSuppliers').mockResolvedValue(suppliers)
+    vi.spyOn(api, 'createProduct').mockRejectedValue(
+      new Error('Product with SKU "SKU-003" already exists'),
+    )
+
+    render(
+      <MemoryRouter initialEntries={['/products/new']}>
+        <Routes>
+          <Route path="/products/new" element={<ProductFormPage />} />
+          <Route path="/products" element={<div>Products list</div>} />
+        </Routes>
+      </MemoryRouter>,
+    )
+
+    await fillRequiredFields(user)
+
+    await user.click(screen.getByRole('button', { name: /Save product/i }))
+
+    expect(await screen.findByRole('alert')).toHaveTextContent(
+      'Product with SKU "SKU-003" already exists',
+    )
   })
 })

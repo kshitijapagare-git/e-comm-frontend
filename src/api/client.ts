@@ -1,7 +1,12 @@
-import type { Category, CategoryInput, Customer, CustomerInput, Order, OrderInput, Product, ProductInput } from '../types'
+import type { Category, CategoryInput, Customer, CustomerInput, Order, OrderInput, Product, ProductInput, Supplier } from '../types'
 
 let categories: Category[] = [
   { id: 'cat1', name: 'Accessories', description: 'Computer accessories' },
+]
+
+const suppliers: Supplier[] = [
+  { id: 'sup1', name: 'Acme Supplies' },
+  { id: 'sup2', name: 'Global Distributors' },
 ]
 
 let products: Product[] = [
@@ -106,6 +111,10 @@ export async function updateOrder(id: string, input: OrderInput): Promise<Order>
 export async function deleteOrder(id: string): Promise<void> {
   orders = orders.filter((o) => o.id !== id)
   return delay(undefined)
+}
+
+export async function getSuppliers(): Promise<Supplier[]> {
+  return delay(suppliers)
 }
 
 export async function getCategories(): Promise<Category[]> {
