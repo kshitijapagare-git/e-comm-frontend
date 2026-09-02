@@ -4,35 +4,13 @@ export interface Product {
   id: string
   name: string
   sku: string
-  barcode?: string
   price: number
-  costPrice?: number
-  taxRatePercent?: number
   stock: number
-  lowStockThreshold?: number
-  unit?: string
   status: ProductStatus
   categoryId: string
-  brand?: string
-  supplierId?: string
-  featured: boolean
-  trackInventory: boolean
-  imageUrl?: string
-  shortDescription?: string
-  description?: string
-  tags?: string[]
-  metaTitle?: string
-  metaDescription?: string
 }
 
 export type ProductInput = Omit<Product, 'id'>
-
-export interface Supplier {
-  id: string
-  name: string
-  email?: string
-  phone?: string
-}
 
 export interface Customer {
   id: string
